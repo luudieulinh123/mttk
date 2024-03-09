@@ -10,14 +10,15 @@ using ShopOnline.Models;
 using System.IO;
 using PagedList;
 using PagedList.Mvc;
+using ShopOnline.Areas.Admin.Patern.Facade;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
     [Authorize]
     public class CRUDproductController : Controller
     {
-        menfashionEntities db = new menfashionEntities();
-
+        menfashionEntities db = DatabaseContext.Instance.GetDbContext();
+        private ProductFacade productFacade = new ProductFacade();
         public ActionResult Index(int? page, string searching)
         {
             var pageNumber = page ?? 1;
@@ -163,25 +164,43 @@ namespace ShopOnline.Areas.Admin.Controllers
         //DELETE
         public ActionResult Delete(int? id)
         {
+            //try
+            //{
+            //    var checkInvoice = db.InvoinceDetails.FirstOrDefault(model => model.productId == id);
+            //    // Kiểm tra xem với mã Product có tồn tại trong bảng InvoinceDetail không?
+            //    if (checkInvoice != null) // Nếu có giá trị thì xuất thông báo lỗi
+            //    {
+            //        TempData["msgDelete"] = "Can't delete this!";
+            //        return RedirectToAction("Index");
+            //    }
+            //    else
+            //    {
+            //        Product product = db.Products.Find(id);
+            //        string currentImg = Request.MapPath(product.image);
+            //        if (System.IO.File.Exists(currentImg))
+            //        {
+            //            System.IO.File.Delete(currentImg);
+            //        }
+            //        db.Products.Remove(product);
+            //        db.SaveChanges();
+            //        return RedirectToAction("Index");
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    TempData["msgDelete"] = "Can't delete this! " + ex.Message;
+            //    return RedirectToAction("Index");
+            //}
             try
             {
-                var checkInvoice = db.InvoinceDetails.FirstOrDefault(model => model.productId == id);
-                // Kiểm tra xem với mã Product có tồn tại trong bảng InvoinceDetail không?
-                if (checkInvoice != null) // Nếu có giá trị thì xuất thông báo lỗi
+                if (productFacade.CanDeleteProduct(id))
                 {
                     TempData["msgDelete"] = "Can't delete this!";
                     return RedirectToAction("Index");
                 }
                 else
                 {
-                    Product product = db.Products.Find(id);
-                    string currentImg = Request.MapPath(product.image);
-                    if (System.IO.File.Exists(currentImg))
-                    {
-                        System.IO.File.Delete(currentImg);
-                    }
-                    db.Products.Remove(product);
-                    db.SaveChanges();
+                    productFacade.DeleteProduct(id);
                     return RedirectToAction("Index");
                 }
             }
@@ -191,6 +210,6 @@ namespace ShopOnline.Areas.Admin.Controllers
                 return RedirectToAction("Index");
             }
         }
+    }
 
     }
-}

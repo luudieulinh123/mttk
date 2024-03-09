@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using ShopOnline.Areas.Admin.Patern.Facade;
 using ShopOnline.Models;
 
 namespace ShopOnline.Areas.Admin.Controllers
@@ -10,22 +11,30 @@ namespace ShopOnline.Areas.Admin.Controllers
     [Authorize]
     public class CRUDcategoryController : Controller
     {
-        menfashionEntities db = new menfashionEntities();
+        menfashionEntities db = DatabaseContext.Instance.GetDbContext();
+       
+
         public ActionResult Index()
         {
+           
             return View();
         }
+
+
         [HttpGet]
         public JsonResult DsCategory()
         {
             try
             {
                 var dsCategory = (from i in db.ProductCategories
-                                select new
-                                {
-                                   categoryId = i.categoryId,
-                                   categoryName = i.categoryName
-                                }).ToList();
+                                  select new
+                                  {
+                                      categoryId = i.categoryId,
+                                      categoryName = i.categoryName
+                                  }).ToList();
+
+                
+
 
                 return Json(new { code = 200, dsCategory = dsCategory, msg = "Successfully get list Category!" }, JsonRequestBehavior.AllowGet);
             }
@@ -34,6 +43,7 @@ namespace ShopOnline.Areas.Admin.Controllers
                 return Json(new { code = 500, msg = "Get list Category false: " + ex.Message, JsonRequestBehavior.AllowGet });
             }
         }
+
         [HttpPost]
         public JsonResult AddCategory(string categoryName)
         {

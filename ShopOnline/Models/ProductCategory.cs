@@ -19,6 +19,8 @@ namespace ShopOnline.Models
         {
             this.Articles = new HashSet<Article>();
             this.Products = new HashSet<Product>();
+           
+            
         }
     
         public int categoryId { get; set; }

@@ -11,13 +11,16 @@ using System.IO;
 using PagedList;
 using PagedList.Mvc;
 using System.Web.Security;
+using ShopOnline.Areas.Admin.Patern.Repository;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
     [Authorize]
     public class CRUDcustomerController : Controller
     {
-        menfashionEntities db = new menfashionEntities();
+        menfashionEntities db = DatabaseContext.Instance.GetDbContext();
+      
+      
         public ActionResult Index()
         {
             return View();
@@ -46,6 +49,8 @@ namespace ShopOnline.Areas.Admin.Controllers
             {
                 return Json(new { code = 500, msg = "Get list Customer false: " + ex.Message, JsonRequestBehavior.AllowGet });
             }
+
+
         }
         [HttpPost]
         public JsonResult Delete(int customerId)
@@ -53,7 +58,7 @@ namespace ShopOnline.Areas.Admin.Controllers
             try
             {
                 Customer customer = (from i in db.Customers
-                                            select i).SingleOrDefault(model => model.customerId == customerId);
+                                     select i).SingleOrDefault(model => model.customerId == customerId);
                 db.Customers.Remove(customer);
                 db.SaveChanges();
                 return Json(new { code = 200, msg = "Successfully delete!" }, JsonRequestBehavior.AllowGet);

@@ -13,13 +13,25 @@ using PagedList.Mvc;
 using System.Web.Security;
 using System.Net.Mail;
 using System.Text;
+using ShopOnline.Areas.Admin.Patern;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
     [Authorize]
     public class CRUDcontactController : Controller
     {
-        menfashionEntities db = new menfashionEntities();
+        menfashionEntities db = DatabaseContext.Instance.GetDbContext();
+        private readonly IEmailSendingStrategy _emailSendingStrategy;
+
+        public CRUDcontactController(IEmailSendingStrategy emailSendingStrategy)
+        {
+            _emailSendingStrategy = emailSendingStrategy;
+        }
+        public CRUDcontactController()
+        {
+            // Không có gì cần thực hiện trong constructor này
+        }
+
         public ActionResult Index()
         {
             return View();
@@ -89,32 +101,49 @@ namespace ShopOnline.Areas.Admin.Controllers
             result = SendEmail(email, "Phản hồi liên hệ", "<p>Xin chào "+ name +",<br /> "+ subject + " <br />Trân trọng.</p>");
             return Json(result, JsonRequestBehavior.AllowGet);
         }
-        public bool SendEmail(string toEmail,string subject, string emailBody)
+        public bool SendEmail(string toEmail, string subject, string emailBody)
         {
+            //try
+            //{
+            //    string senderEmail = System.Configuration.ConfigurationManager.AppSettings["SenderEmail"].ToString();
+            //    string senderPassword = System.Configuration.ConfigurationManager.AppSettings["SenderPassword"].ToString();
+
+            //    SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
+            //    client.EnableSsl = true;
+            //    client.Timeout = 100000;
+            //    client.DeliveryMethod = SmtpDeliveryMethod.Network;
+            //    client.UseDefaultCredentials = false;
+            //    client.Credentials = new NetworkCredential(senderEmail, senderPassword);
+
+            //    MailMessage mailMessage = new MailMessage(senderEmail, toEmail, subject, emailBody);
+            //    mailMessage.IsBodyHtml = true;
+            //    mailMessage.BodyEncoding = UTF8Encoding.UTF8;
+            //    client.Send(mailMessage);
+
+            //    return true;
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    return false;
+            //}
             try
             {
-                string senderEmail = System.Configuration.ConfigurationManager.AppSettings["SenderEmail"].ToString();
-                string senderPassword = System.Configuration.ConfigurationManager.AppSettings["SenderPassword"].ToString();
-
-                SmtpClient client = new SmtpClient("smtp.gmail.com", 587);
-                client.EnableSsl = true;
-                client.Timeout = 100000;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential(senderEmail, senderPassword);
-
-                MailMessage mailMessage = new MailMessage(senderEmail, toEmail, subject, emailBody);
-                mailMessage.IsBodyHtml = true;
-                mailMessage.BodyEncoding = UTF8Encoding.UTF8;
-                client.Send(mailMessage);
-
+                bool success = _emailSendingStrategy.SendEmail(toEmail, subject, emailBody);
                 return true;
-
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
+
+
+
+
+
+
+
+
+            }
         }
-    }
 }

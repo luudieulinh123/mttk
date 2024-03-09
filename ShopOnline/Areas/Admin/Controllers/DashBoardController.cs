@@ -15,7 +15,7 @@ namespace ShopOnline.Areas.Admin.Controllers
     [Authorize]
     public class DashBoardController : Controller
     {
-        menfashionEntities db = new menfashionEntities();
+        menfashionEntities db = DatabaseContext.Instance.GetDbContext();
         public ActionResult Index()
         {
             /*---------------------------------------THỐNG KÊ------------------------------*/

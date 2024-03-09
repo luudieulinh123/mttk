@@ -9,6 +9,10 @@ using CaptchaMvc.Interface;
 using CaptchaMvc.Models;
 using System.Web.Optimization;
 using ShopOnline.App_Start;
+using ShopOnline.Areas.Admin.Patern;
+using ShopOnline.Areas.Admin.Patern.Strategy;
+using Unity;
+using Unity.AspNet.Mvc;
 
 namespace ShopOnline
 {
@@ -16,6 +20,14 @@ namespace ShopOnline
     {
         protected void Application_Start()
         {
+            var container = new UnityContainer();
+
+            // Đăng ký các interface và implementation
+            container.RegisterType<IEmailSendingStrategy, GmailEmailSendingStrategy>();
+
+            // Thiết lập UnityDependencyResolver
+            DependencyResolver.SetResolver(new UnityDependencyResolver(container));
+
             var captchaManager = (DefaultCaptchaManager)CaptchaUtils.CaptchaManager;
             captchaManager.CharactersFactory = () => "my characters";
             captchaManager.PlainCaptchaPairFactory = length =>

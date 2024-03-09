@@ -17,7 +17,7 @@ namespace ShopOnline.Areas.Admin.Controllers
     [Authorize]
     public class CRUDmemberController : Controller
     {
-        menfashionEntities db = new menfashionEntities();
+        menfashionEntities db = DatabaseContext.Instance.GetDbContext();
         public ActionResult Index(int? page, string searching)
         {
             var pageNumber = page ?? 1;

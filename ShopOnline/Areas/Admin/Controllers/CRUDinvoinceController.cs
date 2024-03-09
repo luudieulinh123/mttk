@@ -11,13 +11,17 @@ using System.IO;
 using PagedList;
 using PagedList.Mvc;
 using Rotativa;
+using ShopOnline.Areas.Admin.Patern.Builder;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
     [Authorize]
     public class CRUDinvoinceController : Controller
     {
-        menfashionEntities db = new menfashionEntities();
+        menfashionEntities db = DatabaseContext.Instance.GetDbContext();
+      
+      
+
         public ActionResult Index(int? page)
         {
             var pageNumber = page ?? 1;
@@ -53,9 +57,14 @@ namespace ShopOnline.Areas.Admin.Controllers
             Invoince invoince = db.Invoinces.Find(id);
             invoince.deliveryDate = DateTime.Now;
             invoince.deliveryStatus = true;
-            TempData["Delivery"] = "Order ID " + invoince.invoinceNo + " has been successfully delivered ";
+
+            var deliveryMessageBuilder = new DeliveryMessageBuilder();
+            deliveryMessageBuilder.BuildDeliveryMessage(id);
+
+            TempData["Delivery"] = deliveryMessageBuilder.GetDeliveryMessage();
             db.SaveChanges();
             return RedirectToAction("Index");
+
         }
 
         public ActionResult ExportPDF()

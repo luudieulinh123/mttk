@@ -5,12 +5,22 @@ using System.Web;
 using System.Web.Mvc;
 using ShopOnline.Models;
 using CaptchaMvc.HtmlHelpers;
+using ShopOnline.Areas.Admin.Patern.Proxy;
 
 namespace ShopOnline.Controllers
 {
     public class UserController : Controller
     {
+        
         menfashionEntities db = new menfashionEntities();
+        private MemberProxy memberService;
+
+        public UserController()
+        {
+            this.memberService = new MemberProxy();
+        }
+
+
         [HttpGet]
         public ActionResult Login()
         {
@@ -29,8 +39,9 @@ namespace ShopOnline.Controllers
             var tk = collection["username"];
             var mk = collection["password"];
             mk = Encryptor.MD5Hash(mk);
-
             var check = db.Members.SingleOrDefault(model => model.userName == tk && model.password == mk);
+          
+
             if (ModelState.IsValid)
             {
                 if (check == null)
@@ -63,39 +74,62 @@ namespace ShopOnline.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Register(Member member)
         {
+            //try
+            //{
+            //    if (ModelState.IsValid)
+            //    {
+            //        var check = db.Members.Where(model => model.userName == member.userName).FirstOrDefault();
+
+            //        if (check != null)
+            //        {
+            //            // check username constained in database
+            //            ModelState.AddModelError("", "There was a problem creating your account. Your username already exists.");
+            //            return View(member);
+            //        }
+            //        else
+            //        {
+            //            member.password = Encryptor.MD5Hash(member.password);
+            //            member.dateOfJoin = DateTime.Now;
+            //            member.roleId = 3;
+            //            member.avatar = "~/Content/img/avatar/avatar.jpg";
+            //            member.status = true;
+            //            db.Members.Add(member);
+            //            var result = db.SaveChanges();
+            //            if (result > 0)
+            //            {
+            //                TempData["msgSuccess"] = "Successfully create account!";
+            //                return RedirectToAction("Login");
+            //            }
+            //        }
+            //    }
+            //    return View(member);
+            //}
+            //catch(Exception ex)
+            //{
+            //    TempData["msgFailed"] = "Failed create account! " +ex.Message;
+            //    return RedirectToAction("Login");
+            //}
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var check = db.Members.Where(model => model.userName == member.userName).FirstOrDefault();
-
-                    if (check != null)
+                    if (memberService.IsUsernameExist(member.userName))
                     {
-                        // check username constained in database
                         ModelState.AddModelError("", "There was a problem creating your account. Your username already exists.");
                         return View(member);
                     }
                     else
                     {
-                        member.password = Encryptor.MD5Hash(member.password);
-                        member.dateOfJoin = DateTime.Now;
-                        member.roleId = 3;
-                        member.avatar = "~/Content/img/avatar/avatar.jpg";
-                        member.status = true;
-                        db.Members.Add(member);
-                        var result = db.SaveChanges();
-                        if (result > 0)
-                        {
-                            TempData["msgSuccess"] = "Successfully create account!";
-                            return RedirectToAction("Login");
-                        }
+                        memberService.RegisterMember(member);
+                        TempData["msgSuccess"] = "Successfully create account!";
+                        return RedirectToAction("Login");
                     }
                 }
                 return View(member);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                TempData["msgFailed"] = "Failed create account! " +ex.Message;
+                TempData["msgFailed"] = "Failed create account! " + ex.Message;
                 return RedirectToAction("Login");
             }
         }
