@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using ShopOnline.Models;
 using PayPal.Api;
+using ShopOnline.Areas.Admin.Patern.iterator;
 
 namespace shopOnline.Controllers
 {
@@ -40,21 +41,43 @@ namespace shopOnline.Controllers
         }
         private int Quanlity() // Lấy tổng số sản phẩm giỏ hàng hiện tại
         {
+            //int amount = 0;
+            //List<Cart> listCart = Session["Cart"] as List<Cart>;
+            //if (listCart != null)
+            //{
+            //    amount = listCart.Sum(model => model.Quantity);
+            //}
+            //return amount;
             int amount = 0;
             List<Cart> listCart = Session["Cart"] as List<Cart>;
             if (listCart != null)
             {
-                amount = listCart.Sum(model => model.Quantity);
+                var iterator = new CartIterator(listCart);
+                while (iterator.HasNext())
+                {
+                    amount += iterator.Next().Quantity;
+                }
             }
             return amount;
         }
         private double TotalPrice() //  Lấy tổng số tiền sản phẩm
         {
+            //double total = 0;
+            //List<Cart> listCart = Session["Cart"] as List<Cart>;
+            //if (listCart != null)
+            //{
+            //    total = listCart.Sum(model => model.PriceTotal);
+            //}
+            //return total;
             double total = 0;
             List<Cart> listCart = Session["Cart"] as List<Cart>;
             if (listCart != null)
             {
-                total = listCart.Sum(model => model.PriceTotal);
+                var iterator = new CartIterator(listCart);
+                while (iterator.HasNext())
+                {
+                    total += iterator.Next().PriceTotal;
+                }
             }
             return total;
         }

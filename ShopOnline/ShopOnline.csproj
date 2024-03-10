@@ -892,6 +892,8 @@
     <Compile Include="Areas\Admin\Patern\Builder\DeliveryMessageBuilder.cs" />
     <Compile Include="Areas\Admin\Patern\Builder\IDeliveryMessageBuilder.cs" />
     <Compile Include="Areas\Admin\Patern\Facade\ProductFacade.cs" />
+    <Compile Include="Areas\Admin\Patern\iterator\CartIterator.cs" />
+    <Compile Include="Areas\Admin\Patern\iterator\IIterator.cs" />
     <Compile Include="Areas\Admin\Patern\Proxy\IMemberService.cs" />
     <Compile Include="Areas\Admin\Patern\Proxy\MemberProxy.cs" />
     <Compile Include="Areas\Admin\Patern\Proxy\MemberService.cs" />

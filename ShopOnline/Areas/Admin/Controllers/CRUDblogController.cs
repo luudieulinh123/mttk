@@ -11,11 +11,13 @@ using System.IO;
 using PagedList;
 using PagedList.Mvc;
 
+
 namespace ShopOnline.Areas.Admin.Controllers
 {
     [Authorize]
     public class CRUDblogController : Controller
     {
+        
         menfashionEntities db = DatabaseContext.Instance.GetDbContext();
 
         public ActionResult Index(int? page, string searching)
@@ -80,6 +82,7 @@ namespace ShopOnline.Areas.Admin.Controllers
                 TempData["msgCreatefailed"] = "Create failed! " + ex.Message;
                 return RedirectToAction("Create");
             }
+        
         }
 
         //EDIT
