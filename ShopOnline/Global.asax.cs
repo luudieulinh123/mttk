@@ -14,6 +14,7 @@ using ShopOnline.Areas.Admin.Patern.Strategy;
 using Unity;
 using Unity.AspNet.Mvc;
 
+
 namespace ShopOnline
 {
     public class MvcApplication : System.Web.HttpApplication
@@ -24,7 +25,7 @@ namespace ShopOnline
 
             // Đăng ký các interface và implementation
             container.RegisterType<IEmailSendingStrategy, GmailEmailSendingStrategy>();
-
+           
             // Thiết lập UnityDependencyResolver
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
 
