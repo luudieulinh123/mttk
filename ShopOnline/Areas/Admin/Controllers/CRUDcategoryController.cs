@@ -12,8 +12,8 @@ namespace ShopOnline.Areas.Admin.Controllers
     public class CRUDcategoryController : Controller
     {
         menfashionEntities db = DatabaseContext.Instance.GetDbContext();
-       
 
+        private ProductCategoryFacade productCategoryFacade = new ProductCategoryFacade();
         public ActionResult Index()
         {
            
@@ -47,19 +47,28 @@ namespace ShopOnline.Areas.Admin.Controllers
         [HttpPost]
         public JsonResult AddCategory(string categoryName)
         {
-            try
+            //try
+            //{
+            //    var category = new ProductCategory();
+            //    category.categoryName = categoryName;
+
+            //    db.ProductCategories.Add(category);
+            //    db.SaveChanges();
+
+            //    return Json(new { code = 200, msg = "Successfully added a new product category!!" }, JsonRequestBehavior.AllowGet);
+            //}
+            //catch(Exception ex)
+            //{
+            //    return Json(new { code = 500, msg = "Error: "+ ex.Message }, JsonRequestBehavior.AllowGet);
+            //}
+            bool isAdded = productCategoryFacade.AddCategory(categoryName);
+            if (isAdded)
             {
-                var category = new ProductCategory();
-                category.categoryName = categoryName;
-
-                db.ProductCategories.Add(category);
-                db.SaveChanges();
-
                 return Json(new { code = 200, msg = "Successfully added a new product category!!" }, JsonRequestBehavior.AllowGet);
             }
-            catch(Exception ex)
+            else
             {
-                return Json(new { code = 500, msg = "Error: "+ ex.Message }, JsonRequestBehavior.AllowGet);
+                return Json(new { code = 500, msg = "Error: Unable to add product category." }, JsonRequestBehavior.AllowGet);
             }
         }
 

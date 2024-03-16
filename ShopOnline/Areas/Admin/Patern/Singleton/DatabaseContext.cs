@@ -10,7 +10,7 @@ public sealed class DatabaseContext
 
     private DatabaseContext()
     {
-        // Initialize your database context here
+        
         dbContext = new menfashionEntities();
     }
 

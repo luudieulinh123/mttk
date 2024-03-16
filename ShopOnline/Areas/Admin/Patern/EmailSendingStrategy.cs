@@ -47,6 +47,6 @@ namespace ShopOnline.Areas.Admin.Patern
         }
     }
 
-    // Tương tự, bạn có thể triển khai các chiến lược gửi email khác nhau
+    
 
 }

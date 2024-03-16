@@ -10,7 +10,7 @@ using ShopOnline.Models;
 using System.IO;
 using PagedList;
 using PagedList.Mvc;
-
+using ShopOnline.Areas.Admin.Patern.Facade;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
@@ -19,6 +19,7 @@ namespace ShopOnline.Areas.Admin.Controllers
     {
         
         menfashionEntities db = DatabaseContext.Instance.GetDbContext();
+        private ArticleFacade articleFacade = new ArticleFacade();
 
         public ActionResult Index(int? page, string searching)
         {
@@ -146,23 +147,30 @@ namespace ShopOnline.Areas.Admin.Controllers
         //DELETE
         public ActionResult Delete(int? id)
         {
-            try
+            //try
+            //{
+            //    Article article = db.Articles.Find(id);
+            //    string currentImg = Request.MapPath(article.image);
+            //    if (System.IO.File.Exists(currentImg))
+            //    {
+            //        System.IO.File.Delete(currentImg);
+            //    }
+            //    db.Articles.Remove(article);
+            //    db.SaveChanges();
+            //    return RedirectToAction("Index");
+            //}
+            //catch (Exception ex)
+            //{
+            //    TempData["msgDelete"] = "Can't delete this! " + ex.Message;
+            //    return RedirectToAction("Index");
+            //}
+            bool isDeleted = articleFacade.DeleteArticle(id);
+            if (!isDeleted)
             {
-                Article article = db.Articles.Find(id);
-                string currentImg = Request.MapPath(article.image);
-                if (System.IO.File.Exists(currentImg))
-                {
-                    System.IO.File.Delete(currentImg);
-                }
-                db.Articles.Remove(article);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                TempData["msgDelete"] = "Can't delete this article.";
             }
-            catch (Exception ex)
-            {
-                TempData["msgDelete"] = "Can't delete this! " + ex.Message;
-                return RedirectToAction("Index");
-            }
+
+            return RedirectToAction("Index");
         }
 
     }

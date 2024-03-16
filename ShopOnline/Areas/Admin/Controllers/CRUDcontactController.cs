@@ -29,7 +29,7 @@ namespace ShopOnline.Areas.Admin.Controllers
         }
         public CRUDcontactController()
         {
-            // Không có gì cần thực hiện trong constructor này
+            
         }
 
         public ActionResult Index()
