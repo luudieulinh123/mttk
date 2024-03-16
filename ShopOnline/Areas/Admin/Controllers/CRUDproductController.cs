@@ -11,6 +11,7 @@ using System.IO;
 using PagedList;
 using PagedList.Mvc;
 using ShopOnline.Areas.Admin.Patern.Facade;
+using ShopOnline.Areas.Admin.Patern.Facade.Products;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
@@ -19,6 +20,9 @@ namespace ShopOnline.Areas.Admin.Controllers
     {
         menfashionEntities db = DatabaseContext.Instance.GetDbContext();
         private ProductFacade productFacade = new ProductFacade();
+        private ProductService productService = new ProductService();
+
+
         public ActionResult Index(int? page, string searching)
         {
             var pageNumber = page ?? 1;
@@ -39,67 +43,84 @@ namespace ShopOnline.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Product product, HttpPostedFileBase uploadFile)
         {
+            //try
+            //{
+            //    var productName = product.productName.Trim();
+            //    // Lấy tên sản phẩm để kiểm tra có trùng k
+            //    var check = db.Products.SingleOrDefault(model => model.productName == productName);
+            //    // Xử lí ảnh
+            //    var fileName = Path.GetFileName(uploadFile.FileName);
+            //    var path = Path.Combine(Server.MapPath("~/Content/img/product"), fileName);
+            //    string extension = Path.GetExtension(uploadFile.FileName);
+
+            //    if (extension.ToLower() == ".jpg" || extension.ToLower() == ".jpeg" || extension.ToLower() == ".png")
+            //    {
+            //        if (check != null)
+            //        {
+            //            ModelState.AddModelError("", "Product name already exists");
+            //        }
+            //        else
+            //        {
+            //            if (uploadFile == null)
+            //            {
+            //                ModelState.AddModelError("", "Error while file uploading.");
+            //            }
+            //            else
+            //            {
+            //                if (product.discount >= 100)
+            //                {
+            //                    ModelState.AddModelError("", "Discount  percent must less than 100.");
+            //                }
+            //                else
+            //                {
+            //                    product.productName = product.productName.Trim();
+            //                    product.brand = product.brand.Trim();
+            //                    product.image = "~/Content/img/product/" + fileName;
+            //                    product.userName = Session["userNameAdmin"].ToString();
+            //                    product.dateCreate = DateTime.Now;
+
+            //                    product.status = true;
+
+
+            //                    db.Products.Add(product);
+            //                    if (db.SaveChanges() > 0)
+            //                    {
+            //                        uploadFile.SaveAs(path);
+            //                        ModelState.Clear();
+            //                        TempData["msgCreate"] = "Successfully create a new product!";
+            //                        return RedirectToAction("Index");
+            //                    }
+            //                }
+            //            }
+            //        }
+
+            //    }
+            //    else
+            //    {
+            //        ModelState.AddModelError("", "Invalid File Type");
+            //    }
+            //    ViewBag.categoryId = new SelectList(db.ProductCategories, "categoryId", "categoryName", product.categoryId);
+            //    return View(product);
+            //}
+            //catch (Exception ex)
+            //{
+            //    TempData["msgCreatefailed"] = "Create failed! " + ex.Message;
+            //    return RedirectToAction("Create");
+            //}
+
             try
             {
-                var productName = product.productName.Trim();
-                // Lấy tên sản phẩm để kiểm tra có trùng k
-                var check = db.Products.SingleOrDefault(model => model.productName == productName);
-                // Xử lí ảnh
-                var fileName = Path.GetFileName(uploadFile.FileName);
-                var path = Path.Combine(Server.MapPath("~/Content/img/product"), fileName);
-                string extension = Path.GetExtension(uploadFile.FileName);
-
-                if (extension.ToLower() == ".jpg" || extension.ToLower() == ".jpeg" || extension.ToLower() == ".png")
-                {
-                    if (check != null)
-                    {
-                        ModelState.AddModelError("", "Product name already exists");
-                    }
-                    else
-                    {
-                        if (uploadFile == null)
-                        {
-                            ModelState.AddModelError("", "Error while file uploading.");
-                        }
-                        else
-                        {
-                            if (product.discount >= 100)
-                            {
-                                ModelState.AddModelError("", "Discount  percent must less than 100.");
-                            }
-                            else
-                            {
-                                product.productName = product.productName.Trim();
-                                product.brand = product.brand.Trim();
-                                product.image = "~/Content/img/product/" + fileName;
-                                product.userName = Session["userNameAdmin"].ToString();
-                                product.dateCreate = DateTime.Now;
-                                product.status = true;
-                                db.Products.Add(product);
-                                if (db.SaveChanges() > 0)
-                                {
-                                    uploadFile.SaveAs(path);
-                                    ModelState.Clear();
-                                    TempData["msgCreate"] = "Successfully create a new product!";
-                                    return RedirectToAction("Index");
-                                }
-                            }
-                        }
-                    }
-
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid File Type");
-                }
-                ViewBag.categoryId = new SelectList(db.ProductCategories, "categoryId", "categoryName", product.categoryId);
-                return View(product);
+                productService.CreateProduct(product, uploadFile);
+                TempData["msgCreate"] = "Successfully create a new product!";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 TempData["msgCreatefailed"] = "Create failed! " + ex.Message;
                 return RedirectToAction("Create");
             }
+
+
         }
 
         //EDIT

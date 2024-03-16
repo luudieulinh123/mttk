@@ -11,7 +11,7 @@ using System.IO;
 using PagedList;
 using PagedList.Mvc;
 using System.Web.Security;
-using ShopOnline.Areas.Admin.Patern.Repository;
+
 
 namespace ShopOnline.Areas.Admin.Controllers
 {

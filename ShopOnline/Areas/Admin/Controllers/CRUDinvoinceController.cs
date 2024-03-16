@@ -12,6 +12,7 @@ using PagedList;
 using PagedList.Mvc;
 using Rotativa;
 using ShopOnline.Areas.Admin.Patern.Builder;
+using ShopOnline.Areas.Admin.Patern.Facade;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
@@ -19,8 +20,8 @@ namespace ShopOnline.Areas.Admin.Controllers
     public class CRUDinvoinceController : Controller
     {
         menfashionEntities db = DatabaseContext.Instance.GetDbContext();
-      
-      
+
+        private InvoiceFacade invoiceFacade = new InvoiceFacade();
 
         public ActionResult Index(int? page)
         {
@@ -40,16 +41,27 @@ namespace ShopOnline.Areas.Admin.Controllers
         }
         public ActionResult Delete(string id)
         {
-            List<InvoinceDetail> ctdh = db.InvoinceDetails.Where(model => model.invoinceNo == id).ToList();
-            foreach (var i in ctdh)
+            //List<InvoinceDetail> ctdh = db.InvoinceDetails.Where(model => model.invoinceNo == id).ToList();
+            //foreach (var i in ctdh)
+            //{
+            //    db.InvoinceDetails.Remove(i);
+            //}
+            //db.SaveChanges();
+            //Invoince invoince = db.Invoinces.Find(id);
+            //db.Invoinces.Remove(invoince);
+            //TempData["DeleteOrder"] = "Successfully delete!";
+            //db.SaveChanges();
+            //return RedirectToAction("Index");
+            bool isDeleted = invoiceFacade.DeleteInvoice(id);
+            if (isDeleted)
             {
-                db.InvoinceDetails.Remove(i);
+                TempData["DeleteOrder"] = "Successfully deleted!";
             }
-            db.SaveChanges();
-            Invoince invoince = db.Invoinces.Find(id);
-            db.Invoinces.Remove(invoince);
-            TempData["DeleteOrder"] = "Successfully delete!";
-            db.SaveChanges();
+            else
+            {
+                TempData["DeleteOrder"] = "Failed to delete!";
+            }
+
             return RedirectToAction("Index");
         }
         public ActionResult DeliverySuccess(string id)
@@ -58,6 +70,8 @@ namespace ShopOnline.Areas.Admin.Controllers
             invoince.deliveryDate = DateTime.Now;
             invoince.deliveryStatus = true;
 
+
+            
             var deliveryMessageBuilder = new DeliveryMessageBuilder();
             deliveryMessageBuilder.BuildDeliveryMessage(id);
 

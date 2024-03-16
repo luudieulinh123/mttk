@@ -11,6 +11,7 @@ using System.IO;
 using PagedList;
 using PagedList.Mvc;
 using System.Web.Security;
+using ShopOnline.Areas.Admin.Patern.Facade.M;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
@@ -18,6 +19,8 @@ namespace ShopOnline.Areas.Admin.Controllers
     public class CRUDmemberController : Controller
     {
         menfashionEntities db = DatabaseContext.Instance.GetDbContext();
+
+        private EmployeeFacade employeeFacade = new EmployeeFacade();
         public ActionResult Index(int? page, string searching)
         {
             var pageNumber = page ?? 1;
@@ -35,64 +38,76 @@ namespace ShopOnline.Areas.Admin.Controllers
         [HttpPost]
         public ActionResult Create(Member member, HttpPostedFileBase uploadFile)
         {
+            //try
+            //{
+            //    var username = member.userName.Trim();
+            //    // Lấy tên đăng nhập đã nhập vào kiểm tra có trùng 
+            //    var check = db.Members.SingleOrDefault(model => model.userName == username);
+            //    // Xử lí ảnh
+            //    var fileName = Path.GetFileName(uploadFile.FileName);
+            //    var path = Path.Combine(Server.MapPath("~/Content/img/avatar"), fileName);
+            //    string extension = Path.GetExtension(uploadFile.FileName);
+
+            //    if (extension.ToLower() == ".jpg" || extension.ToLower() == ".jpeg" || extension.ToLower() == ".png")
+            //    {
+            //        if (check != null)
+            //        {
+            //            ModelState.AddModelError("", "Username already exists");
+            //        }
+            //        else
+            //        {
+            //            if (uploadFile == null)
+            //            {
+            //                ModelState.AddModelError("", "Error while file uploading.");
+            //            }
+            //            else
+            //            {
+            //                member.firstName = member.firstName.Trim();
+            //                member.lastName = member.lastName.Trim();
+            //                member.email = member.email.Trim();
+            //                member.address = member.address.Trim();
+            //                member.phone = member.phone.Trim();
+            //                member.identityNumber = member.identityNumber.Trim();
+            //                member.avatar = "~/Content/img/avatar/" + fileName;
+            //                member.dateOfJoin = DateTime.Now;
+            //                member.status = true;
+            //                member.password = Encryptor.MD5Hash(member.password);
+            //                db.Members.Add(member);
+            //                if (db.SaveChanges() > 0)
+            //                {
+            //                    uploadFile.SaveAs(path);
+            //                    ModelState.Clear();
+            //                    TempData["msgCreate"] = "Successfully create a new member!";
+            //                    return RedirectToAction("Index");
+            //                }
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        ModelState.AddModelError("", "Invalid File Type");
+            //    }
+
+            //    ViewBag.roleId = new SelectList(db.Roles, "roleId", "roleName", member.roleId);
+            //    return View(member);
+            //}
+            //catch(Exception ex)
+            //{
+            //    TempData["msgCreatefailed"] = "Create failed! " + ex.Message;
+            //    return RedirectToAction("Create");
+            //}
             try
             {
-                var username = member.userName.Trim();
-                // Lấy tên đăng nhập đã nhập vào kiểm tra có trùng 
-                var check = db.Members.SingleOrDefault(model => model.userName == username);
-                // Xử lí ảnh
-                var fileName = Path.GetFileName(uploadFile.FileName);
-                var path = Path.Combine(Server.MapPath("~/Content/img/avatar"), fileName);
-                string extension = Path.GetExtension(uploadFile.FileName);
-
-                if (extension.ToLower() == ".jpg" || extension.ToLower() == ".jpeg" || extension.ToLower() == ".png")
-                {
-                    if (check != null)
-                    {
-                        ModelState.AddModelError("", "Username already exists");
-                    }
-                    else
-                    {
-                        if (uploadFile == null)
-                        {
-                            ModelState.AddModelError("", "Error while file uploading.");
-                        }
-                        else
-                        {
-                            member.firstName = member.firstName.Trim();
-                            member.lastName = member.lastName.Trim();
-                            member.email = member.email.Trim();
-                            member.address = member.address.Trim();
-                            member.phone = member.phone.Trim();
-                            member.identityNumber = member.identityNumber.Trim();
-                            member.avatar = "~/Content/img/avatar/" + fileName;
-                            member.dateOfJoin = DateTime.Now;
-                            member.status = true;
-                            member.password = Encryptor.MD5Hash(member.password);
-                            db.Members.Add(member);
-                            if (db.SaveChanges() > 0)
-                            {
-                                uploadFile.SaveAs(path);
-                                ModelState.Clear();
-                                TempData["msgCreate"] = "Successfully create a new member!";
-                                return RedirectToAction("Index");
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid File Type");
-                }
-
-                ViewBag.roleId = new SelectList(db.Roles, "roleId", "roleName", member.roleId);
-                return View(member);
+                employeeFacade.CreateMember(member, uploadFile);
+                TempData["msgCreate"] = "Successfully create a new member!";
+                return RedirectToAction("Index");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TempData["msgCreatefailed"] = "Create failed! " + ex.Message;
                 return RedirectToAction("Create");
             }
+
         }
 
         // EDIT

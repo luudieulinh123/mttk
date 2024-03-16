@@ -12,13 +12,13 @@ namespace ShopOnline.Areas.Admin.Patern.Proxy
 
         public bool IsUsernameExist(string username)
         {
-            // Có thể thêm logic kiểm soát ở đây trước khi gọi đến Real Object
+           
             return memberService.IsUsernameExist(username);
         }
 
         public void RegisterMember(Member member)
         {
-            // Có thể thêm logic kiểm soát ở đây trước khi gọi đến Real Object
+            
             if (member == null)
             {
                 throw new ArgumentNullException(nameof(member));

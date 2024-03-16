@@ -29,6 +29,9 @@ namespace ShopOnline.Areas.Admin.Patern.Facade
             db.Products.Remove(product);
             db.SaveChanges();
         }
+      
+
+
 
 
 

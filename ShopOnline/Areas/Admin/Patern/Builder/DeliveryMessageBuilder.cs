@@ -7,16 +7,16 @@ namespace ShopOnline.Areas.Admin.Patern.Builder
 {
     public class DeliveryMessageBuilder
     {
-        private string _deliveryMessage;
+        private string deliveryMessage;
 
         public void BuildDeliveryMessage(string invoiceNo)
         {
-            _deliveryMessage = "Order ID " + invoiceNo + " has been successfully delivered ";
+            deliveryMessage = "Order ID " + invoiceNo + " has been successfully delivered ";
         }
 
         public string GetDeliveryMessage()
         {
-            return _deliveryMessage;
+            return deliveryMessage;
         }
     }
 }
