@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using ShopOnline.Models;
 using PayPal.Api;
-using ShopOnline.Areas.Admin.Patern.iterator;
+
 
 namespace shopOnline.Controllers
 {
@@ -39,20 +38,36 @@ namespace shopOnline.Controllers
                 return Redirect(strURL);
             }
         }
+        //private int Quanlity() // Lấy tổng số sản phẩm giỏ hàng hiện tại
+        //{
+        //int amount = 0;
+        //List<Cart> listCart = Session["Cart"] as List<Cart>;
+        //if (listCart != null)
+        //{
+        //    amount = listCart.Sum(model => model.Quantity);
+        //}
+        //return amount;
+        //int amount = 0;
+        //List<Cart> listCart = Session["Cart"] as List<Cart>;
+        //if (listCart != null)
+        //{
+        //    var iterator = new CartIterator(listCart);
+        //    while (iterator.HasNext())
+        //    {
+        //        amount += iterator.Next().Quantity;
+        //    }
+        ////}
+        //return amount;
+
+
+        //}
         private int Quanlity() // Lấy tổng số sản phẩm giỏ hàng hiện tại
         {
-            //int amount = 0;
-            //List<Cart> listCart = Session["Cart"] as List<Cart>;
-            //if (listCart != null)
-            //{
-            //    amount = listCart.Sum(model => model.Quantity);
-            //}
-            //return amount;
             int amount = 0;
             List<Cart> listCart = Session["Cart"] as List<Cart>;
             if (listCart != null)
             {
-                var iterator = new CartIterator(listCart);
+                var iterator = new ShopOnline.Areas.Admin.Patern.iterator.CartIterator(listCart);
                 while (iterator.HasNext())
                 {
                     amount += iterator.Next().Quantity;
@@ -69,17 +84,30 @@ namespace shopOnline.Controllers
             //    total = listCart.Sum(model => model.PriceTotal);
             //}
             //return total;
+            //double total = 0;
+            //List<Cart> listCart = Session["Cart"] as List<Cart>;
+            //if (listCart != null)
+            //{
+            //    var iterator = new CartIterator(listCart);
+            //    while (iterator.HasNext())
+            //    {
+            //        total += iterator.Next().PriceTotal;
+            //    }
+            //}
+            //return total;
+
             double total = 0;
             List<Cart> listCart = Session["Cart"] as List<Cart>;
             if (listCart != null)
             {
-                var iterator = new CartIterator(listCart);
+                var iterator = new ShopOnline.Areas.Admin.Patern.iterator.CartIterator(listCart);
                 while (iterator.HasNext())
                 {
                     total += iterator.Next().PriceTotal;
                 }
             }
             return total;
+
         }
         public PartialViewResult Navbar() // Hiển thị số lượng sản phẩm và tiền trên navbar
         {
@@ -376,9 +404,24 @@ namespace shopOnline.Controllers
         private Payment payment;
         private Payment CreatePayment(APIContext apiContext, string redirectUrl)
         {
+            //var listItems = new ItemList() { items = new List<Item>() };
+            //List<Cart> listCart = getCart();
+            //foreach(var cart in listCart)
+            //{
+            //    listItems.items.Add(new Item()
+            //    {
+            //        name = cart.NameItem,
+            //        currency = "USD",
+            //        price = cart.PriceItem.ToString(),
+            //        quantity = cart.Quantity.ToString(),
+            //        sku = "sku"
+            //    });
+            //}
             var listItems = new ItemList() { items = new List<Item>() };
             List<Cart> listCart = getCart();
-            foreach(var cart in listCart)
+            IIterator iterator = new ShopOnline.Models.CartIterator(listCart);
+            var cart = iterator.First();
+            while (!iterator.IsDone)
             {
                 listItems.items.Add(new Item()
                 {
@@ -500,14 +543,33 @@ namespace shopOnline.Controllers
                 bill.deliveryStatus = false;
                 // Biến totalmoney lưu tổng tiền sản phẩm từ giỏ hàng
                 int totalmoney = 0;
-                foreach (var item in listCart)
+                //foreach (var item in listCart)
+                //{
+                //    totalmoney += Convert.ToInt32(item.PriceTotal);
+                //}
+                IIterator iterator = new ShopOnline.Models.CartIterator(listCart);
+                var item = iterator.First();
+                while (!iterator.IsDone)
                 {
                     totalmoney += Convert.ToInt32(item.PriceTotal);
                 }
                 bill.totalMoney = totalmoney;
                 db.Invoinces.Add(bill);
                 db.SaveChanges();
-                foreach (var item in listCart)
+                //foreach (var item in listCart)
+                //{
+                //    InvoinceDetail ctdh = new InvoinceDetail();
+                //    ctdh.invoinceNo = bill.invoinceNo;
+                //    ctdh.productId = item.IdItem;
+                //    ctdh.quanlityProduct = item.Quantity;
+                //    ctdh.unitPrice = item.unitPrice;
+                //    ctdh.totalPrice = (int?)(long)item.PriceTotal;
+                //    ctdh.totalDiscount = item.Discount * item.Quantity;
+                //    db.InvoinceDetails.Add(ctdh);
+                //}
+                //_ = new ShopOnline.Models.CartIterator(listCart);
+                //_ = iterator.First();
+                while (!iterator.IsDone)
                 {
                     InvoinceDetail ctdh = new InvoinceDetail();
                     ctdh.invoinceNo = bill.invoinceNo;

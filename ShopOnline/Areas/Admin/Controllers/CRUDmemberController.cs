@@ -13,6 +13,7 @@ using PagedList.Mvc;
 using System.Web.Security;
 using ShopOnline.Areas.Admin.Patern.Facade.M;
 
+
 namespace ShopOnline.Areas.Admin.Controllers
 {
     [Authorize]
@@ -21,6 +22,7 @@ namespace ShopOnline.Areas.Admin.Controllers
         menfashionEntities db = DatabaseContext.Instance.GetDbContext();
 
         private EmployeeFacade employeeFacade = new EmployeeFacade();
+   
         public ActionResult Index(int? page, string searching)
         {
             var pageNumber = page ?? 1;
@@ -124,6 +126,7 @@ namespace ShopOnline.Areas.Admin.Controllers
         {
             try
             {
+
                 if (ModelState.IsValid)
                 {
                     if (uploadFile != null)
@@ -158,11 +161,12 @@ namespace ShopOnline.Areas.Admin.Controllers
                 ViewBag.roleId = new SelectList(db.Roles, "roleId", "roleName", member.roleId);
                 return View(member);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TempData["msgEditFailed"] = "Edit failed! " + ex.Message;
                 return RedirectToAction("Index");
             }
+
         }
 
         // DELETE
@@ -216,6 +220,9 @@ namespace ShopOnline.Areas.Admin.Controllers
                 TempData["msgDeleteFailed"] = "Can't delete this! " + ex.Message;
                 return RedirectToAction("Index");
             }
+
+
+
         }
     }
 }

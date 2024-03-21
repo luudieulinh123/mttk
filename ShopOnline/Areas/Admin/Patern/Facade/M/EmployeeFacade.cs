@@ -47,5 +47,47 @@ namespace ShopOnline.Areas.Admin.Patern.Facade.M
 
             uploadFile.SaveAs(path);
         }
+
+
+        public bool CanDeleteMember(string userName)
+        {
+            var member = db.Members.Find(userName);
+            if (member == null)
+                throw new ArgumentException("Member not found", nameof(userName));
+
+            var checkArticle = db.Articles.FirstOrDefault(model => model.userName == userName);
+            var checkInvoice = db.Invoinces.FirstOrDefault(model => model.userName == userName);
+            var checkProduct = db.Products.FirstOrDefault(model => model.userName == userName);
+
+            return checkArticle == null && checkInvoice == null && checkProduct == null;
+        }
+
+        public void DeleteMember(string userName)
+        {
+            var member = db.Members.Find(userName);
+            if (member == null)
+                throw new ArgumentException("Member not found", nameof(userName));
+
+            db.Members.Remove(member);
+            db.SaveChanges();
+        }
+
+        public void DeleteMemberAndAvatar(string userName, string avatarPath)
+        {
+            DeleteMember(userName);
+
+            // Delete avatar file if it exists
+            string avatarFullPath = HttpContext.Current.Server.MapPath(avatarPath);
+            if (File.Exists(avatarFullPath))
+            {
+                File.Delete(avatarFullPath);
+            }
+        }
+
+
+
+
+
+
     }
 }

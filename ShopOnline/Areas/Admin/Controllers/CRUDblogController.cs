@@ -11,6 +11,7 @@ using System.IO;
 using PagedList;
 using PagedList.Mvc;
 using ShopOnline.Areas.Admin.Patern.Facade;
+using ShopOnline.Areas.Admin.Patern.Strategy.CreateBlog;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
@@ -20,6 +21,22 @@ namespace ShopOnline.Areas.Admin.Controllers
         
         menfashionEntities db = DatabaseContext.Instance.GetDbContext();
         private ArticleFacade articleFacade = new ArticleFacade();
+
+        //hàm check đuôi file 
+        private IImageStrategy GetImageStrategy(string extension)
+        {
+            switch (extension.ToLower())
+            {
+                case ".jpg":
+                case ".jpeg":
+                    return new JpgImageStrategy();
+                case ".png":
+                    return new PngImageStrategy();
+                default:
+                    throw new NotSupportedException("Unsupported image format");
+            }
+        }
+
 
         public ActionResult Index(int? page, string searching)
         {
@@ -41,49 +58,95 @@ namespace ShopOnline.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Article article, HttpPostedFileBase uploadFile)
         {
-            try
-            {
-                // Xử lí ảnh
-                var fileName = Path.GetFileName(uploadFile.FileName);
-                var path = Path.Combine(Server.MapPath("~/Content/img/blog"), fileName);
-                string extension = Path.GetExtension(uploadFile.FileName);
+            //try
+            //{
+            //    // Xử lí ảnh
+            //    var fileName = Path.GetFileName(uploadFile.FileName);
+            //    var path = Path.Combine(Server.MapPath("~/Content/img/blog"), fileName);
+            //    string extension = Path.GetExtension(uploadFile.FileName);
 
-                if (extension.ToLower() == ".jpg" || extension.ToLower() == ".jpeg" || extension.ToLower() == ".png")
-                {
-                    if (uploadFile == null)
-                    {
-                        ModelState.AddModelError("", "Error while file uploading.");
-                    }
-                    else
-                    {
+            //    if (extension.ToLower() == ".jpg" || extension.ToLower() == ".jpeg" || extension.ToLower() == ".png")
+            //    {
+            //        if (uploadFile == null)
+            //        {
+            //            ModelState.AddModelError("", "Error while file uploading.");
+            //        }
+            //        else
+            //        {
 
-                        article.image = "~/Content/img/blog/" + fileName;
-                        article.userName = Session["userNameAdmin"].ToString();
-                        article.publicDate = DateTime.Now;
-                        article.status = true;
-                        db.Articles.Add(article);
-                        if (db.SaveChanges() > 0)
-                        {
-                            uploadFile.SaveAs(path);
-                            ModelState.Clear();
-                            TempData["msgCreate"] = "Successfully create a new blog!";
-                            return RedirectToAction("Index");
-                        }
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Invalid File Type");
-                }
-                ViewBag.categoryId = new SelectList(db.ProductCategories, "categoryId", "categoryName", article.categoryId);
-                return View(article);
-            }
-            catch (Exception ex)
-            {
-                TempData["msgCreatefailed"] = "Create failed! " + ex.Message;
-                return RedirectToAction("Create");
-            }
+            //            article.image = "~/Content/img/blog/" + fileName;
+            //            article.userName = Session["userNameAdmin"].ToString();
+            //            article.publicDate = DateTime.Now;
+            //            article.status = true;
+            //            db.Articles.Add(article);
+            //            if (db.SaveChanges() > 0)
+            //            {
+            //                uploadFile.SaveAs(path);
+            //                ModelState.Clear();
+            //                TempData["msgCreate"] = "Successfully create a new blog!";
+            //                return RedirectToAction("Index");
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        ModelState.AddModelError("", "Invalid File Type");
+            //    }
+            //    ViewBag.categoryId = new SelectList(db.ProductCategories, "categoryId", "categoryName", article.categoryId);
+            //    return View(article);
+            //}
+            //catch (Exception ex)
+            //{
+            //    TempData["msgCreatefailed"] = "Create failed! " + ex.Message;
+            //    return RedirectToAction("Create");
+            //}
         
+            try
+    {
+        // Xử lí ảnh
+        var fileName = Path.GetFileName(uploadFile.FileName);
+        var path = Path.Combine(Server.MapPath("~/Content/img/blog"), fileName);
+        string extension = Path.GetExtension(uploadFile.FileName);
+
+        if (extension.ToLower() == ".jpg" || extension.ToLower() == ".jpeg" || extension.ToLower() == ".png")
+        {
+            if (uploadFile == null)
+            {
+                ModelState.AddModelError("", "Error while file uploading.");
+            }
+            else
+            {
+                // Sử dụng mẫu thiết kế Strategy xử lý ảnh phù hợp
+                IImageStrategy imageStrategy = GetImageStrategy(extension);
+                article.image = imageStrategy.GetImagePath(fileName);
+
+                article.userName = Session["userNameAdmin"].ToString();
+                article.publicDate = DateTime.Now;
+                article.status = true;
+                db.Articles.Add(article);
+                if (db.SaveChanges() > 0)
+                {
+                    uploadFile.SaveAs(path);
+                    ModelState.Clear();
+                    TempData["msgCreate"] = "Successfully create a new blog!";
+                    return RedirectToAction("Index");
+                }
+            }
+        }
+        else
+        {
+            ModelState.AddModelError("", "Invalid File Type");
+        }
+        ViewBag.categoryId = new SelectList(db.ProductCategories, "categoryId", "categoryName", article.categoryId);
+        return View(article);
+    }
+    catch (Exception ex)
+    {
+        TempData["msgCreatefailed"] = "Create failed! " + ex.Message;
+        return RedirectToAction("Create");
+    }
+
+
         }
 
         //EDIT
