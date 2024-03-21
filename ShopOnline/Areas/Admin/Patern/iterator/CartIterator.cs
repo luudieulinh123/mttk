@@ -8,7 +8,7 @@ namespace ShopOnline.Areas.Admin.Patern.iterator
 {
     public class CartIterator : IIterator<Cart>
     {
-        private List<Cart> _listCart;
+        private readonly List<Cart> _listCart;
         private int _index;
 
         public CartIterator(List<Cart> listCart)
@@ -32,5 +32,9 @@ namespace ShopOnline.Areas.Admin.Patern.iterator
             }
             throw new InvalidOperationException("không");
         }
+    }
+
+    public interface IIterator<T>
+    {
     }
 }

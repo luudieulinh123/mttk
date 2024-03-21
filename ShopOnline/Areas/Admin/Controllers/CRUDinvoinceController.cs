@@ -13,6 +13,7 @@ using PagedList.Mvc;
 using Rotativa;
 using ShopOnline.Areas.Admin.Patern.Builder;
 using ShopOnline.Areas.Admin.Patern.Facade;
+using ShopOnline.Areas.Admin.Patern.State;
 
 namespace ShopOnline.Areas.Admin.Controllers
 {
@@ -67,11 +68,12 @@ namespace ShopOnline.Areas.Admin.Controllers
         public ActionResult DeliverySuccess(string id)
         {
             Invoince invoince = db.Invoinces.Find(id);
-            invoince.deliveryDate = DateTime.Now;
-            invoince.deliveryStatus = true;
+            //invoince.deliveryDate = DateTime.Now;
+            //invoince.deliveryStatus = true;
+            DeliveryProcessContext context = new DeliveryProcessContext();
+            context.Deliver(invoince);
 
 
-            
             var deliveryMessageBuilder = new DeliveryMessageBuilder();
             deliveryMessageBuilder.BuildDeliveryMessage(id);
 

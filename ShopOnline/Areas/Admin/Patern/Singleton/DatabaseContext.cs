@@ -4,7 +4,7 @@ using System.Data.Entity;
 
 public sealed class DatabaseContext
 {
-    private static readonly Lazy<DatabaseContext> instance = new Lazy<DatabaseContext>(() => new DatabaseContext());
+    private static  Lazy<DatabaseContext> instance = new Lazy<DatabaseContext>(() => new DatabaseContext());
 
     private readonly menfashionEntities dbContext;
 
@@ -16,7 +16,14 @@ public sealed class DatabaseContext
 
     public static DatabaseContext Instance
     {
-        get { return instance.Value; }
+        get
+        {
+            if (instance == null)
+            {
+                instance = new Lazy<DatabaseContext>(() => new DatabaseContext());
+            }
+            return instance.Value;
+        }
     }
 
     public menfashionEntities GetDbContext()

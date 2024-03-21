@@ -920,12 +920,21 @@
     <Compile Include="Areas\Admin\Patern\Proxy\MemberService.cs" />
     <Compile Include="Areas\Admin\Patern\Singleton\DatabaseContext.cs" />
     <Compile Include="Areas\Admin\Controllers\LoginMemberController.cs" />
-    <Compile Include="Areas\Admin\Patern\EmailSendingStrategy.cs" />
+    <Compile Include="Areas\Admin\Patern\Strategy\EmailSendingStrategy.cs" />
+    <Compile Include="Areas\Admin\Patern\State\DeliveryProcessContext.cs" />
+    <Compile Include="Areas\Admin\Patern\State\IDeliveryState.cs" />
+    <Compile Include="Areas\Admin\Patern\State\PendingDeliveryState.cs" />
+    <Compile Include="Areas\Admin\Patern\Strategy\CreateBlog\IImageStrategy.cs" />
+    <Compile Include="Areas\Admin\Patern\Strategy\CreateBlog\JpgImageStrategy.cs" />
+    <Compile Include="Areas\Admin\Patern\Strategy\CreateBlog\PngImageStrategy.cs" />
     <Compile Include="Areas\Admin\Patern\Strategy\Edit blog\IEditStrategy.cs" />
     <Compile Include="Areas\Admin\Patern\Strategy\Edit blog\WithoutUploadFileEditStrategycs.cs" />
     <Compile Include="Areas\Admin\Patern\Strategy\Edit blog\WithUploadFileEditStrategy.cs" />
-    <Compile Include="Areas\Admin\Patern\Strategy\IEmailSendingStrategy.cs" />
     <Compile Include="Areas\Admin\Patern\Strategy\GmailEmailSendingStrategy.cs" />
+    <Compile Include="Areas\Admin\Patern\Strategy\IEmailSendingStrategy.cs" />
+    <Compile Include="Areas\Admin\Patern\Strategy\Member\FileUploadStrategy.cs" />
+    <Compile Include="Areas\Admin\Patern\Strategy\Member\IUploadStrategy.cs" />
+    <Compile Include="Areas\Admin\Patern\Strategy\Member\NullUploadStrategycs.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -938,6 +947,7 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\Cart.cs" />
+    <Compile Include="Models\CartIterator.cs" />
     <Compile Include="Models\Contact.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

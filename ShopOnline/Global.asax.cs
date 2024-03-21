@@ -25,6 +25,7 @@ namespace ShopOnline
 
             // Đăng ký các interface và implementation
             container.RegisterType<IEmailSendingStrategy, GmailEmailSendingStrategy>();
+
            
             // Thiết lập UnityDependencyResolver
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
